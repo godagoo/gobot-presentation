@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GoBot - Your AI Assistant in Telegram</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Reveal.js -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/plugin/highlight/monokai.css">
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+/* ===== AUTONOMEE BRANDING ===== */
+:root {
+  /* Colors */
+  --auto-bg-primary: #0a0a0a;
+  --auto-bg-card: #111111;
+  --auto-accent: #7b8fa8;
+  --auto-text-primary: #f5f4f0;
+  --auto-text-secondary: rgba(245, 244, 240, 0.7);
+  --auto-text-muted: #666666;
+  --auto-border: rgba(123, 143, 168, 0.15);
+
+  /* Typography */
+  --auto-font-serif: 'Playfair Display', serif;
+  --auto-font-sans: 'Inter', -apple-system, sans-serif;
+
+  /* Spacing */
+  --auto-spacing-sm: 16px;
+  --auto-spacing-md: 24px;
+  --auto-spacing-lg: 40px;
+  --auto-spacing-xl: 60px;
+}
+
+/* ===== BASE STYLES ===== */
+body {
+  font-family: var(--auto-font-sans);
+  background: var(--auto-bg-primary);
+  color: var(--auto-text-primary);
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.reveal {
+  font-family: var(--auto-font-sans);
+  font-size: 20px;
+  color: var(--auto-text-primary);
+}
+
+.reveal .slides {
+  text-align: left;
+}
+
+.reveal .slides section {
+  padding: 0;
+}
+
+/* ===== SLIDE BASE ===== */
+.slide {
+  height: 100%;
+  width: 100%;
+  padding: var(--auto-spacing-xl);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  background: var(--auto-bg-primary);
+  position: relative;
+}
+
+/* Subtle grid pattern */
+.slide::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(123, 143, 168, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(123, 143, 168, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.slide > * {
+  position: relative;
+  z-index: 1;
+}
+
+.slide--center {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+/* ===== TYPOGRAPHY ===== */
+.kicker {
+  font-size: 0.75rem;
+  color: var(--auto-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-bottom: var(--auto-spacing-sm);
+  font-weight: 500;
+}
+
+h1, .h1 {
+  font-family: var(--auto-font-serif);
+  font-size: 4rem;
+  font-weight: 400;
+  font-style: italic;
+  line-height: 1.1;
+  margin: 0 0 var(--auto-spacing-md) 0;
+  letter-spacing: -0.02em;
+}
+
+h2, .h2 {
+  font-family: var(--auto-font-serif);
+  font-size: 3rem;
+  font-weight: 400;
+  font-style: italic;
+  line-height: 1.15;
+  margin: 0 0 var(--auto-spacing-md) 0;
+}
+
+h3, .h3 {
+  font-family: var(--auto-font-serif);
+  font-size: 2rem;
+  font-weight: 400;
+  font-style: italic;
+  line-height: 1.3;
+  margin: 0 0 var(--auto-spacing-sm) 0;
+}
+
+h4, .h4 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+}
+
+.lead {
+  font-size: 1.125rem;
+  color: var(--auto-text-secondary);
+  line-height: 1.7;
+  max-width: 600px;
+}
+
+.muted {
+  color: var(--auto-text-muted);
+}
+
+.accent {
+  color: var(--auto-accent);
+}
+
+/* ===== SECTION NUMBERS ===== */
+.section-num {
+  font-size: 0.875rem;
+  color: var(--auto-accent);
+  letter-spacing: 0.1em;
+  margin-bottom: var(--auto-spacing-sm);
+}
+
+/* ===== LAYOUT UTILITIES ===== */
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--auto-spacing-xl);
+  align-items: center;
+  flex: 1;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--auto-spacing-md);
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--auto-spacing-md);
+}
+
+/* ===== CARDS ===== */
+.card {
+  background: var(--auto-bg-card);
+  border: 1px solid var(--auto-border);
+  border-radius: 4px;
+  padding: var(--auto-spacing-md);
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  border-color: var(--auto-accent);
+  transform: translateY(-2px);
+}
+
+.card__icon {
+  width: 40px;
+  height: 40px;
+  margin-bottom: var(--auto-spacing-sm);
+  color: var(--auto-accent);
+}
+
+.card__icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.card__title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.card__text {
+  font-size: 0.9375rem;
+  color: var(--auto-text-secondary);
+  line-height: 1.6;
+}
+
+/* ===== LISTS ===== */
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.list li {
+  padding: 12px 0;
+  padding-left: 32px;
+  position: relative;
+  border-bottom: 1px solid var(--auto-border);
+  font-size: 0.9375rem;
+  color: var(--auto-text-secondary);
+  line-height: 1.6;
+}
+
+.list li:last-child {
+  border-bottom: none;
+}
+
+.list li::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  color: var(--auto-accent);
+  font-weight: 500;
+}
+
+/* ===== BUTTONS ===== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 28px;
+  border-radius: 2px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: transparent;
+  border: 1px solid var(--auto-accent);
+  color: var(--auto-text-primary);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.btn:hover {
+  background: var(--auto-accent);
+  color: var(--auto-bg-primary);
+}
+
+/* ===== CODE ===== */
+.code-block {
+  background: var(--auto-bg-card);
+  border: 1px solid var(--auto-border);
+  border-radius: 4px;
+  padding: var(--auto-spacing-md);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.875rem;
+  color: var(--auto-accent);
+  overflow-x: auto;
+}
+
+/* ===== REVEAL.JS OVERRIDES ===== */
+.reveal .controls {
+  color: var(--auto-accent);
+}
+
+.reveal .progress {
+  background: var(--auto-border);
+  height: 2px;
+}
+
+.reveal .progress span {
+  background: var(--auto-accent);
+}
+
+.reveal .slide-number {
+  background: transparent;
+  color: var(--auto-text-muted);
+  font-size: 14px;
+}
+
+/* ===== FRAGMENT ANIMATIONS ===== */
+.reveal .slides section .fragment {
+  opacity: 0;
+  transition: all 0.5s ease;
+}
+
+.reveal .slides section .fragment.visible {
+  opacity: 1;
+}
+
+.reveal .slides section .fragment.fade-up {
+  transform: translateY(20px);
+}
+
+.reveal .slides section .fragment.fade-up.visible {
+  transform: translateY(0);
+}
+  </style>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<!-- SLIDE 1: TITLE -->
+<section>
+  <div class="slide slide--center">
+    <div class="content" style="align-items: center;">
+      <p class="kicker">Personal AI Infrastructure</p>
+      <h1>GoBot</h1>
+      <p class="lead" style="text-align: center;">
+        Your AI assistant in Telegram.<br>Context-aware, autonomous, and always available.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 2: WHAT IS GOBOT -->
+<section>
+  <div class="slide">
+    <div class="content">
+      <p class="section-num">01 // OVERVIEW</p>
+      <h2>What is GoBot?</h2>
+      <p class="lead">
+        A Telegram-based AI interface that brings the power of Claude to your pocket.
+        GoBot remembers context, handles complex requests, and asks for confirmation before taking important actions.
+      </p>
+      <div class="grid-2" style="margin-top: 40px;">
+        <div class="card fragment fade-up">
+          <div class="card__icon"><i data-lucide="message-circle"></i></div>
+          <h4 class="card__title">Telegram Native</h4>
+          <p class="card__text">Works where you already communicate. No new apps to learn.</p>
+        </div>
+        <div class="card fragment fade-up">
+          <div class="card__icon"><i data-lucide="brain"></i></div>
+          <h4 class="card__title">Context Aware</h4>
+          <p class="card__text">Remembers conversations, goals, and your preferences across sessions.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 3: KEY FEATURES -->
+<section>
+  <div class="slide">
+    <div class="content">
+      <p class="section-num">02 // CAPABILITIES</p>
+      <h2>What GoBot Can Do</h2>
+      <div class="grid-2" style="margin-top: 32px;">
+        <div class="card fragment fade-up">
+          <div class="card__icon"><i data-lucide="mic"></i></div>
+          <h4 class="card__title">Voice Messages</h4>
+          <p class="card__text">Send voice notes, get text or voice responses back.</p>
+        </div>
+        <div class="card fragment fade-up">
+          <div class="card__icon"><i data-lucide="image"></i></div>
+          <h4 class="card__title">Image Analysis</h4>
+          <p class="card__text">Send photos for analysis, OCR, or visual understanding.</p>
+        </div>
+        <div class="card fragment fade-up">
+          <div class="card__icon"><i data-lucide="check-circle"></i></div>
+          <h4 class="card__title">Confirmation Flows</h4>
+          <p class="card__text">Interactive buttons for approvals before taking action.</p>
+        </div>
+        <div class="card fragment fade-up">
+          <div class="card__icon"><i data-lucide="database"></i></div>
+          <h4 class="card__title">Persistent Memory</h4>
+          <p class="card__text">Goals, facts, and conversation history stored across sessions.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 4: ARCHITECTURE -->
+<section>
+  <div class="slide">
+    <div class="content">
+      <p class="section-num">03 // SYSTEM</p>
+      <h2>How It Works</h2>
+      <div class="split">
+        <div>
+          <p class="lead">
+            GoBot uses a three-tier architecture for reliability and flexibility.
+          </p>
+          <ul class="list" style="margin-top: 32px;">
+            <li class="fragment"><strong>VPS Gateway</strong> — Receives messages, routes to processor</li>
+            <li class="fragment"><strong>Mac Relay</strong> — Local processing with full MCP tool access</li>
+            <li class="fragment"><strong>VPS Processor</strong> — Cloud processing with Agent SDK</li>
+          </ul>
+        </div>
+        <div class="code-block fragment">
+Telegram → VPS Gateway
+  ↓
+  ├─→ Mac Relay (local)
+  │   └─→ Claude Code + MCP
+  │
+  └─→ VPS Processor (cloud)
+      └─→ Agent SDK
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 5: DEPLOYMENT OPTIONS -->
+<section>
+  <div class="slide">
+    <div class="content">
+      <p class="section-num">04 // DEPLOYMENT</p>
+      <h2>Deployment Modes</h2>
+      <div class="grid-3" style="margin-top: 32px;">
+        <div class="card fragment">
+          <h4 class="card__title">Mac Relay</h4>
+          <p class="card__text muted" style="margin-bottom: 16px;">Local processing</p>
+          <ul class="list">
+            <li>Full MCP access</li>
+            <li>Fast responses</li>
+            <li>Requires Mac online</li>
+          </ul>
+        </div>
+        <div class="card fragment">
+          <h4 class="card__title">VPS Legacy</h4>
+          <p class="card__text muted" style="margin-bottom: 16px;">Direct API</p>
+          <ul class="list">
+            <li>Always available</li>
+            <li>Simple messages</li>
+            <li>No complex tools</li>
+          </ul>
+        </div>
+        <div class="card fragment">
+          <h4 class="card__title">VPS Agent SDK</h4>
+          <p class="card__text muted" style="margin-bottom: 16px;">Cloud + tools</p>
+          <ul class="list">
+            <li>24/7 uptime</li>
+            <li>Agent SDK tools</li>
+            <li>Persistent context</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 6: SMART ROUTING -->
+<section>
+  <div class="slide">
+    <div class="content">
+      <p class="section-num">05 // INTELLIGENCE</p>
+      <h2>Smart Routing</h2>
+      <div class="split">
+        <div>
+          <p class="lead">
+            GoBot automatically routes messages to the best processor based on complexity and available resources.
+          </p>
+          <ul class="list" style="margin-top: 32px;">
+            <li class="fragment">Simple questions → Fast Haiku API</li>
+            <li class="fragment">Complex tasks → Agent SDK with tools</li>
+            <li class="fragment">Force VPS mode with <code>/vps</code> prefix</li>
+          </ul>
+        </div>
+        <div class="card fragment">
+          <h4 class="card__title">Complexity Detection</h4>
+          <p class="card__text">
+            Keywords like "research", "email", "calendar" trigger tool-enabled processing.
+            Everything else uses the fast direct API for instant responses.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 7: TOOLS & INTEGRATIONS -->
+<section>
+  <div class="slide">
+    <div class="content">
+      <p class="section-num">06 // INTEGRATIONS</p>
+      <h2>Connected Tools</h2>
+      <div class="grid-2" style="margin-top: 32px;">
+        <div class="card fragment fade-up">
+          <div class="card__icon"><i data-lucide="mail"></i></div>
+          <h4 class="card__title">Gmail & Calendar</h4>
+          <p class="card__text">Search emails, create events, manage schedule.</p>
+        </div>
+        <div class="card fragment fade-up">
+          <div class="card__icon"><i data-lucide="book"></i></div>
+          <h4 class="card__title">Notion</h4>
+          <p class="card__text">Task management, databases, project tracking.</p>
+        </div>
+        <div class="card fragment fade-up">
+          <div class="card__icon"><i data-lucide="globe"></i></div>
+          <h4 class="card__title">Web Research</h4>
+          <p class="card__text">Real-time web search and documentation lookup.</p>
+        </div>
+        <div class="card fragment fade-up">
+          <div class="card__icon"><i data-lucide="message-square"></i></div>
+          <h4 class="card__title">Communication</h4>
+          <p class="card__text">WhatsApp, LinkedIn, Folk CRM integration.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 8: GETTING STARTED -->
+<section>
+  <div class="slide">
+    <div class="content">
+      <p class="section-num">07 // START</p>
+      <h2>Getting Started</h2>
+      <div class="split">
+        <div>
+          <ul class="list">
+            <li class="fragment">Clone the PAI repository</li>
+            <li class="fragment">Set up Telegram bot token</li>
+            <li class="fragment">Configure environment variables</li>
+            <li class="fragment">Deploy VPS Gateway (Hostinger)</li>
+            <li class="fragment">Optional: Run Mac Relay locally</li>
+          </ul>
+        </div>
+        <div class="card fragment">
+          <h4 class="card__title">Repository</h4>
+          <p class="card__text">
+            Full setup instructions in the PAI repository.
+            Includes service configs, deployment scripts, and environment templates.
+          </p>
+          <div class="btn" style="margin-top: 20px;">View on GitHub</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 9: USE CASES -->
+<section>
+  <div class="slide">
+    <div class="content">
+      <p class="section-num">08 // EXAMPLES</p>
+      <h2>Real Use Cases</h2>
+      <div class="grid-2" style="margin-top: 32px;">
+        <div class="card fragment">
+          <h4 class="card__title">Email Triage</h4>
+          <p class="card__text">"Check my inbox and summarize urgent emails"</p>
+        </div>
+        <div class="card fragment">
+          <h4 class="card__title">Calendar Management</h4>
+          <p class="card__text">"What's on my schedule tomorrow?"</p>
+        </div>
+        <div class="card fragment">
+          <h4 class="card__title">Research</h4>
+          <p class="card__text">"Research [competitor] and save findings to Notion"</p>
+        </div>
+        <div class="card fragment">
+          <h4 class="card__title">Image Analysis</h4>
+          <p class="card__text">Send birthday invite → "Add event to calendar"</p>
+        </div>
+        <div class="card fragment">
+          <h4 class="card__title">Decision Support</h4>
+          <p class="card__text">"Should I take this sponsorship deal?"</p>
+        </div>
+        <div class="card fragment">
+          <h4 class="card__title">Voice Calls</h4>
+          <p class="card__text">Live conversation mode for complex discussions</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 10: CLOSING CTA -->
+<section>
+  <div class="slide slide--center">
+    <div class="content" style="align-items: center;">
+      <h1>Build Your Own</h1>
+      <p class="lead" style="text-align: center; margin-bottom: 40px;">
+        GoBot is part of the Personal AI Infrastructure (PAI) project.<br>
+        Open source, customizable, and built for autonomy.
+      </p>
+      <div class="btn">Join the Community</div>
+    </div>
+  </div>
+</section>
+
+    </div>
+  </div>
+
+  <!-- Reveal.js Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/plugin/highlight/highlight.js"></script>
+
+  <script>
+    Reveal.initialize({
+      hash: true,
+      slideNumber: true,
+      controls: true,
+      controlsLayout: 'bottom-right',
+      controlsBackArrows: 'faded',
+      progress: true,
+      center: false,
+      transition: 'fade',
+      backgroundTransition: 'fade',
+      width: 1280,
+      height: 720,
+      margin: 0.05,
+      minScale: 0.2,
+      maxScale: 2,
+      autoAnimate: true,
+      autoAnimateDuration: 0.8,
+      plugins: [RevealHighlight]
+    });
+
+    // Initialize Lucide icons
+    lucide.createIcons();
+  </script>
+</body>
+</html>
