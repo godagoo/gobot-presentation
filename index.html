@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GoBot - Your Always-On AI Assistant</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    /* Base Colors */
+    :root {
+      --bg-dark: #0a0a0a;
+      --bg-card: #111111;
+      --accent: #7b8fa8;
+      --accent-light: #9bb0c9;
+      --accent-glow: rgba(123, 143, 168, 0.15);
+      --text-primary: #f5f4f0;
+      --text-secondary: #a8a8a8;
+      --text-muted: #666666;
+      --border: #2a2a2a;
+    }
+
+    /* Critical: Prevent White Background */
+    html, body {
+      background: var(--bg-dark) !important;
+      margin: 0;
+      padding: 0;
+    }
+
+    .reveal-viewport {
+      background: var(--bg-dark) !important;
+      background-image:
+        linear-gradient(rgba(123, 143, 168, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(123, 143, 168, 0.03) 1px, transparent 1px) !important;
+      background-size: 60px 60px !important;
+    }
+
+    .reveal {
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      color: var(--text-secondary);
+      background: transparent !important;
+    }
+
+    /* Typography */
+    .reveal h1, .reveal h2, .reveal h3 {
+      font-family: 'Playfair Display', serif;
+      color: var(--text-primary);
+      font-weight: 400;
+      text-transform: none;
+      margin-bottom: 0.5em;
+    }
+
+    .reveal h1 {
+      font-size: 3.5em;
+      font-style: italic;
+      line-height: 1.2;
+    }
+
+    .reveal h2 {
+      font-size: 2.5em;
+      margin-bottom: 1em;
+    }
+
+    .reveal h3 {
+      font-size: 1.8em;
+      color: var(--accent-light);
+    }
+
+    .reveal p {
+      font-size: 1.2em;
+      line-height: 1.6;
+      margin: 0.8em 0;
+    }
+
+    .reveal section {
+      background: transparent;
+    }
+
+    /* Section Divider */
+    .section-divider {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    .section-divider h2 {
+      font-size: 4em;
+      margin: 0;
+      background: linear-gradient(135deg, var(--accent-light), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .section-number {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.2em;
+      color: var(--text-muted);
+      letter-spacing: 0.2em;
+      margin-bottom: 0.5em;
+    }
+
+    /* Feature Cards */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2em;
+      margin: 2em 0;
+    }
+
+    .feature-card {
+      background: transparent;
+      border: 1px solid var(--border);
+      padding: 2em;
+      transition: all 0.3s ease;
+    }
+
+    .feature-card:hover {
+      background: var(--bg-card);
+      border-color: var(--accent);
+      box-shadow: 0 0 40px var(--accent-glow);
+    }
+
+    .feature-card h3 {
+      margin-top: 0;
+      font-size: 1.5em;
+    }
+
+    .feature-card p {
+      font-size: 1em;
+      margin: 0.5em 0 0 0;
+    }
+
+    /* Metrics */
+    .metrics {
+      display: flex;
+      justify-content: space-around;
+      margin: 3em 0;
+    }
+
+    .metric {
+      text-align: center;
+    }
+
+    .metric-value {
+      font-family: 'Playfair Display', serif;
+      font-size: 4em;
+      color: var(--accent-light);
+      font-weight: 400;
+    }
+
+    .metric-label {
+      font-size: 1em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-top: 0.5em;
+    }
+
+    /* Lists */
+    .reveal ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .reveal li {
+      margin: 1em 0;
+      padding-left: 2em;
+      position: relative;
+      font-size: 1.2em;
+    }
+
+    .reveal li:before {
+      content: '—';
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+    }
+
+    /* Code */
+    .reveal code {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--bg-card);
+      padding: 0.2em 0.5em;
+      border: 1px solid var(--border);
+      font-size: 0.9em;
+    }
+
+    .reveal pre code {
+      display: block;
+      padding: 1.5em;
+      max-height: 500px;
+      font-size: 0.8em;
+      line-height: 1.5;
+    }
+
+    /* Table */
+    .reveal table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 2em 0;
+    }
+
+    .reveal th, .reveal td {
+      padding: 1em;
+      border: 1px solid var(--border);
+      text-align: left;
+    }
+
+    .reveal th {
+      background: var(--bg-card);
+      color: var(--accent-light);
+      font-weight: 500;
+    }
+
+    /* Buttons */
+    .cta-button {
+      display: inline-block;
+      padding: 1em 2em;
+      border: 2px solid var(--accent);
+      color: var(--accent-light);
+      text-decoration: none;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1em;
+      transition: all 0.3s ease;
+      margin-top: 2em;
+    }
+
+    .cta-button:hover {
+      background: var(--accent);
+      color: var(--bg-dark);
+      box-shadow: 0 0 30px var(--accent-glow);
+    }
+
+    /* Highlight */
+    .highlight {
+      color: var(--accent-light);
+      font-weight: 500;
+    }
+
+    /* Split Layout */
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3em;
+      align-items: center;
+    }
+
+    /* Architecture Diagram */
+    .arch-diagram {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 2em;
+      margin: 2em 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9em;
+      line-height: 2;
+    }
+
+    .arch-arrow {
+      color: var(--accent);
+      display: inline-block;
+      margin: 0 0.5em;
+    }
+
+    /* Timeline */
+    .timeline {
+      margin: 2em 0;
+    }
+
+    .timeline-item {
+      display: flex;
+      align-items: flex-start;
+      margin: 1.5em 0;
+    }
+
+    .timeline-version {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent-light);
+      font-size: 1.2em;
+      min-width: 120px;
+      font-weight: 500;
+    }
+
+    .timeline-content {
+      flex: 1;
+      padding-left: 2em;
+      border-left: 2px solid var(--border);
+    }
+
+    .timeline-content h4 {
+      margin: 0 0 0.5em 0;
+      color: var(--text-primary);
+      font-size: 1.1em;
+    }
+
+    .timeline-content p {
+      margin: 0;
+      font-size: 1em;
+    }
+
+    /* Comparison Table */
+    .comparison {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2em;
+      margin: 2em 0;
+    }
+
+    .comparison-col {
+      background: transparent;
+      border: 1px solid var(--border);
+      padding: 2em;
+      transition: all 0.3s ease;
+    }
+
+    .comparison-col:hover {
+      background: var(--bg-card);
+      border-color: var(--accent);
+    }
+
+    .comparison-col h3 {
+      margin-top: 0;
+      font-size: 1.5em;
+      color: var(--accent-light);
+    }
+
+    .comparison-col .price {
+      font-size: 2.5em;
+      color: var(--text-primary);
+      font-family: 'Playfair Display', serif;
+      margin: 0.5em 0;
+    }
+
+    .comparison-col ul {
+      text-align: left;
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- Title Slide -->
+      <section>
+        <h1>GoBot</h1>
+        <p style="font-size: 1.5em; color: var(--accent-light); margin-top: 1em;">
+          Your Always-On AI Assistant
+        </p>
+        <p style="font-size: 1.2em; color: var(--text-muted); margin-top: 2em;">
+          Claude-powered Telegram bot with persistent memory, multi-agent reasoning, and 24/7 availability
+        </p>
+      </section>
+
+      <!-- What is GoBot -->
+      <section>
+        <h2>What is GoBot?</h2>
+        <p>
+          An <span class="highlight">always-on personal AI assistant</span> that runs on Telegram,
+          powered by Claude with persistent memory, multi-agent routing, proactive check-ins,
+          voice capabilities, and morning briefings.
+        </p>
+        <p style="margin-top: 2em;">
+          Three deployment modes: <span class="highlight">local desktop</span> (free with Claude subscription),
+          <span class="highlight">VPS</span> (pay-per-token), or <span class="highlight">hybrid</span> (combines both).
+        </p>
+      </section>
+
+      <!-- Section: Core Features -->
+      <section class="section-divider">
+        <div class="section-number">01 // FEATURES</div>
+        <h2>Core Features</h2>
+      </section>
+
+      <!-- Multi-Agent Routing -->
+      <section>
+        <h2>Multi-Agent Routing</h2>
+        <div class="feature-grid">
+          <div class="feature-card">
+            <h3>General</h3>
+            <p>Orchestrator & everyday assistance</p>
+          </div>
+          <div class="feature-card">
+            <h3>Research</h3>
+            <p>ReAct reasoning for deep investigation</p>
+          </div>
+          <div class="feature-card">
+            <h3>Content</h3>
+            <p>RoT reasoning for creative strategy</p>
+          </div>
+          <div class="feature-card">
+            <h3>Finance</h3>
+            <p>CoT reasoning for ROI analysis</p>
+          </div>
+          <div class="feature-card">
+            <h3>Strategy</h3>
+            <p>ToT reasoning for big decisions</p>
+          </div>
+          <div class="feature-card">
+            <h3>Critic</h3>
+            <p>Devil's advocate perspective</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Smart Routing -->
+      <section>
+        <h2>Smart Routing</h2>
+        <p>
+          Auto-classifies messages by complexity and routes to the right model:
+        </p>
+        <div class="metrics">
+          <div class="metric">
+            <div class="metric-value">Haiku</div>
+            <div class="metric-label">Simple & Fast</div>
+          </div>
+          <div class="metric">
+            <div class="metric-value">Sonnet</div>
+            <div class="metric-label">Medium Tasks</div>
+          </div>
+          <div class="metric">
+            <div class="metric-value">Opus</div>
+            <div class="metric-label">Complex & Deep</div>
+          </div>
+        </div>
+        <p style="margin-top: 2em; color: var(--text-muted);">
+          ~60% of messages handled by Haiku = significant cost savings
+        </p>
+      </section>
+
+      <!-- Memory & Knowledge -->
+      <section>
+        <h2>Persistent Memory & Knowledge</h2>
+        <ul>
+          <li><span class="highlight">Facts & Goals</span> — Remember everything you share</li>
+          <li><span class="highlight">8-Category Knowledge Base</span> — Project, Person, Preference, Learning, Process, Decision, Reference, Tool</li>
+          <li><span class="highlight">Semantic Search</span> — Find information by meaning, not just keywords</li>
+          <li><span class="highlight">Conversation History</span> — Full context across sessions</li>
+          <li><span class="highlight">Smart Context Injection</span> — Relevant knowledge auto-loaded into every prompt</li>
+        </ul>
+      </section>
+
+      <!-- Proactive Features -->
+      <section>
+        <h2>Proactive Intelligence</h2>
+        <div class="feature-grid">
+          <div class="feature-card">
+            <h3>Smart Check-ins</h3>
+            <p>Context-aware outreach when relevant (not annoying notifications)</p>
+          </div>
+          <div class="feature-card">
+            <h3>Morning Briefings</h3>
+            <p>Daily summary: goals, calendar, inbox, tasks, AI news</p>
+          </div>
+          <div class="feature-card">
+            <h3>Call-to-Task</h3>
+            <p>Phone calls auto-detect and execute actionable tasks</p>
+          </div>
+          <div class="feature-card">
+            <h3>Streaming Progress</h3>
+            <p>Real-time updates for complex tasks</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Voice & Assets -->
+      <section>
+        <h2>Voice & Asset Management</h2>
+        <ul>
+          <li><span class="highlight">Text-to-Speech</span> — ElevenLabs voice replies</li>
+          <li><span class="highlight">Voice Transcription</span> — Audio messages via Gemini</li>
+          <li><span class="highlight">Phone Calls</span> — Full Twilio + ElevenLabs integration</li>
+          <li><span class="highlight">Persistent Image Storage</span> — Photos saved to Supabase with AI descriptions</li>
+          <li><span class="highlight">Semantic Image Search</span> — Find photos by meaning</li>
+        </ul>
+      </section>
+
+      <!-- Section: Architecture -->
+      <section class="section-divider">
+        <div class="section-number">02 // ARCHITECTURE</div>
+        <h2>How It Works</h2>
+      </section>
+
+      <!-- Three Deployment Modes -->
+      <section>
+        <h2>Three Deployment Modes</h2>
+        <div class="comparison">
+          <div class="comparison-col">
+            <h3>Local Only</h3>
+            <div class="price">$20</div>
+            <div class="metric-label">PER MONTH</div>
+            <ul>
+              <li>Runs on your laptop</li>
+              <li>Claude subscription</li>
+              <li>Free Supabase tier</li>
+              <li>Works when laptop is on</li>
+            </ul>
+          </div>
+          <div class="comparison-col">
+            <h3>VPS</h3>
+            <div class="price">$55-105</div>
+            <div class="metric-label">PER MONTH</div>
+            <ul>
+              <li>Always-on cloud</li>
+              <li>$5 VPS + API usage</li>
+              <li>24/7 availability</li>
+              <li>Instant responses</li>
+            </ul>
+          </div>
+          <div class="comparison-col">
+            <h3>Hybrid</h3>
+            <div class="price">$45-75</div>
+            <div class="metric-label">PER MONTH</div>
+            <ul>
+              <li>Best of both worlds</li>
+              <li>Local when awake</li>
+              <li>VPS when asleep</li>
+              <li>Cost-optimized</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Architecture Diagram -->
+      <section>
+        <h2>Hybrid Architecture</h2>
+        <div class="arch-diagram">
+          <div>Telegram <span class="arch-arrow">→</span> VPS (always on)</div>
+          <div style="margin-left: 3em;">↓</div>
+          <div style="margin-left: 3em;">Is local machine awake?</div>
+          <div style="margin-left: 6em;">├─ YES <span class="arch-arrow">→</span> forward to local (free, Claude Code)</div>
+          <div style="margin-left: 6em;">└─ NO <span class="arch-arrow">→</span> process on VPS (paid, Anthropic API)</div>
+          <div style="margin-left: 3em;">↓</div>
+          <div style="margin-left: 3em;">Supabase (shared database)</div>
+        </div>
+        <p style="margin-top: 2em; color: var(--text-muted);">
+          <span class="highlight">Key principle:</span> Same code everywhere. One codebase for local, VPS, and hybrid modes.
+        </p>
+      </section>
+
+      <!-- Tech Stack -->
+      <section>
+        <h2>Technology Stack</h2>
+        <table>
+          <tr>
+            <th>Component</th>
+            <th>Technology</th>
+          </tr>
+          <tr>
+            <td>Runtime</td>
+            <td>Bun (TypeScript)</td>
+          </tr>
+          <tr>
+            <td>Telegram SDK</td>
+            <td>grammY</td>
+          </tr>
+          <tr>
+            <td>AI (Local)</td>
+            <td>Claude Code CLI</td>
+          </tr>
+          <tr>
+            <td>AI (VPS)</td>
+            <td>Anthropic Messages API</td>
+          </tr>
+          <tr>
+            <td>Database</td>
+            <td>Supabase (PostgreSQL + Storage)</td>
+          </tr>
+          <tr>
+            <td>Voice (optional)</td>
+            <td>ElevenLabs + Twilio</td>
+          </tr>
+          <tr>
+            <td>Transcription (optional)</td>
+            <td>Google Gemini</td>
+          </tr>
+        </table>
+      </section>
+
+      <!-- Section: Setup -->
+      <section class="section-divider">
+        <div class="section-number">03 // SETUP</div>
+        <h2>Getting Started</h2>
+      </section>
+
+      <!-- Setup Process -->
+      <section>
+        <h2>Setup Guided by Claude Code</h2>
+        <p>No programming experience needed. Claude Code walks you through everything:</p>
+        <pre><code>git clone https://github.com/autonomee/gobot.git
+cd gobot
+bun install
+claude    # Opens Claude Code for guided setup</code></pre>
+        <p style="margin-top: 2em;">Claude Code then guides:</p>
+        <ul>
+          <li>Creating Telegram bot via BotFather</li>
+          <li>Setting up Supabase project</li>
+          <li>Personalizing profile and agents</li>
+          <li>Testing the bot</li>
+          <li>Configuring always-on services</li>
+          <li>Deploying to VPS (optional)</li>
+        </ul>
+      </section>
+
+      <!-- Prerequisites -->
+      <section>
+        <h2>Prerequisites</h2>
+        <ul>
+          <li><span class="highlight">Bun runtime</span> — Modern TypeScript runtime</li>
+          <li><span class="highlight">Claude Code CLI</span> — For local mode</li>
+          <li><span class="highlight">Telegram account</span> — Free messaging platform</li>
+          <li><span class="highlight">Supabase account</span> — Free database tier</li>
+          <li><span class="highlight">PM2</span> — For Windows/Linux always-on (macOS uses launchd)</li>
+        </ul>
+        <p style="margin-top: 2em; color: var(--text-muted);">
+          All free and open-source except Claude subscription ($20/month)
+        </p>
+      </section>
+
+      <!-- Section: Version History -->
+      <section class="section-divider">
+        <div class="section-number">04 // EVOLUTION</div>
+        <h2>Recent Updates</h2>
+      </section>
+
+      <!-- Timeline -->
+      <section>
+        <h2>Version History</h2>
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-version">v2.5.0</div>
+            <div class="timeline-content">
+              <h4>Knowledge Base System</h4>
+              <p>8-category structured knowledge, semantic search, archiving, expiry</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-version">v2.4.0</div>
+            <div class="timeline-content">
+              <h4>Pluggable Briefings</h4>
+              <p>Direct REST APIs (~3s vs ~90s), auto-enable from env vars</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-version">v2.3.0</div>
+            <div class="timeline-content">
+              <h4>Call-to-Task</h4>
+              <p>Phone calls auto-detect and execute actionable tasks</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-version">v2.2.0</div>
+            <div class="timeline-content">
+              <h4>Persistent Images</h4>
+              <p>Photos stored in Supabase with AI descriptions and semantic search</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-version">v2.1.0</div>
+            <div class="timeline-content">
+              <h4>Smart Routing</h4>
+              <p>Auto-classify by complexity (Haiku/Sonnet/Opus), streaming progress</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Design Principles -->
+      <section>
+        <h2>Design Principles</h2>
+        <ul>
+          <li><span class="highlight">Single user, full power</span> — Personal AI, not SaaS</li>
+          <li><span class="highlight">Graceful degradation</span> — Missing APIs disable features, don't crash</li>
+          <li><span class="highlight">Process isolation</span> — Each service independent</li>
+          <li><span class="highlight">Context over memory</span> — Claude gets full context each call</li>
+          <li><span class="highlight">Local fallback</span> — Works offline with local LLMs</li>
+          <li><span class="highlight">Same code everywhere</span> — One codebase for all modes</li>
+        </ul>
+      </section>
+
+      <!-- CTA -->
+      <section>
+        <h2>Get Started</h2>
+        <p style="font-size: 1.3em; margin: 2em 0;">
+          GoBot is production-ready, open-source, and guided by Claude Code.
+        </p>
+        <p style="font-size: 1.1em; color: var(--text-muted);">
+          Whether you run it locally for free or on a VPS for 24/7 availability,
+          you get the same powerful features.
+        </p>
+        <a href="https://github.com/autonomee/gobot" class="cta-button">View on GitHub</a>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.js"></script>
+  <script>
+    Reveal.initialize({
+      hash: true,
+      transition: 'fade',
+      backgroundTransition: 'fade',
+      controls: true,
+      progress: true,
+      center: true,
+      slideNumber: 'c/t',
+      width: 1280,
+      height: 720,
+      margin: 0.1,
+    });
+  </script>
+</body>
+</html>
